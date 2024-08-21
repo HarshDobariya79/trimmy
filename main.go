@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
+	"trimmy/internal/routes"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	fmt.Println("Starting server on port 8080")
+	app := fiber.New()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, World!")
-	})
+	routes.SetupRoutes(app)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Println("Server error:", err)
-	}
+	log.Println("")
+	log.Fatal(app.Listen(":8080"))
 }
