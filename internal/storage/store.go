@@ -21,7 +21,7 @@ func SaveURL(shortID, url string) error {
 
 func GetURL(id string) (string, bool) {
 	url, err := urlCache.Get(context.Background(), id).Result()
-	return url, err == nil
+	return url, err == redis.Nil
 }
 
 func GenerateShortURL(url string) (string, error) {
