@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"trimmy/internal/services"
+	"trimmy/pkg/config"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -30,5 +31,5 @@ func ShortenURL(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).SendString("Could not shorten URL")
 	}
 
-	return c.JSON(fiber.Map{"shortUrl": "http://localhost:8080/u/" + shortID})
+	return c.JSON(fiber.Map{"shortUrl": config.Env["BACKEND_HOST"] + "/u/" + shortID})
 }
