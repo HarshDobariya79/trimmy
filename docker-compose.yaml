@@ -1,13 +1,63 @@
-version: '3.8'
+version: "3.8"
 services:
   cache:
     image: redis:7.4.0-alpine
     restart: always
     ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass password
+    volumes:
       - cache:/data
+    networks:
+      - db_network
+
+  redis-insight:
+    image: redis/redisinsight:2.54
+    container_name: redisinsight
+    restart: always
+    ports:
+      - "5540:5540"
+    environment:
+      REDIS_URI: redis://password@cache:6379
+    networks:
+      - db_network
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - db_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@trimmy.me
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - db_network
+
 volumes:
   cache:
     driver: local
+  db:
+    driver: local
+  pgadmin-data:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
